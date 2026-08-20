@@ -1,0 +1,13 @@
+.venv/
+socket-wake.py
+wake.py
+
+*.sqlite3
+*.db
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+wake/wake/variables.py
