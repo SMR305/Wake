@@ -2,7 +2,18 @@
 <html>
 <head>
     <title>Persistent Button State</title>
+    {{ servers|json_script:"servers-data" }}
     <script>
+        const servers = JSON.parse(document.getElementById("servers-data").textContent);
+
+        function updateButton(button, idx) {
+            const server = servers[idx];
+            if (server) {
+                button.textContent = server.is_on ? "Enabled" : "Disabled";
+                button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
+            }
+        }
+
         function desktop(button) {
             button.textContent = "Loading...";
             fetch("{% url 'desktop' %}", {
@@ -47,23 +58,13 @@
     <h1>Persistent Button Example</h1>
     <button 
         onclick="desktop(this)"
-        {% if state.button_enabled %}
-        style="background-color: #4CAF50;">
-        Enabled
-        {% else %}
-        style="background-color: #f44336;">
-        Disabled
-        {% endif %}
+        >
+        <script>updateButton(document.currentScript.parentElement, 0);</script>
     </button>
         <button 
         onclick="other(this)"
-        {% if state.button_enabled %}
-        style="background-color: #4CAF50;">
-        Enabled
-        {% else %}
-        style="background-color: #f44336;">
-        Disabled
-        {% endif %}
+        >
+        <script>updateButton(document.currentScript.parentElement, 1);</script>
     </button>
 </body>
 </html>
