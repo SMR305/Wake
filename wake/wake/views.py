@@ -11,10 +11,7 @@ from .variables import TEST_MAC
 
 WAKE_UP = False
 
-def get_or_create_state():
-    state, _ = Server.objects.get_or_create()
-    return state
-
+# Sets up the initial index page and gives it the necessary server information
 def index(request):
     servers = list(Server.objects.values("id", "name", "is_on"))
 
@@ -22,11 +19,13 @@ def index(request):
 
     return render(request, "index.html", {"servers": servers})
 
+# Test Version of the shared helper in order to test and get a feel for the structure of writing and reading from the database
 def toggle_button(request):
     url_name = request.resolver_match.url_name
 
+    # Responds to the 2nd button
     if request.method == "POST" and url_name == "other":
-        server, _ = Server.objects.get_or_create(id=2)
+        server, _ = Server.objects.get_or_create(id=2, name="tmp")
         server.is_on = not server.is_on
 
         server.save()
@@ -37,6 +36,7 @@ def toggle_button(request):
             "label": "Enabled" if server.is_on else "Disabled"
         })
 
+    # Responds to the 1st button
     if request.method == "POST" and url_name == "desktop":
         
         server, _ = Server.objects.get_or_create(id=1, name="desktop", mac_address=TEST_MAC)
@@ -53,5 +53,21 @@ def toggle_button(request):
             "enabled": server.is_on,
             "label": "Enabled" if server.is_on else "Disabled"
         })
-    
+
+    # If the others fail then return an error for an invalid request
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+# Shared helper function for adding a new server
+def add(request):
+    return render(request, "tmp.html")
+
+# Shared helper function for shutting down or starting up a given server
+def power(request):
+    return render(request, "tmp.html")
+
+# Shared helper function for requesting a reboot from a given server
+def reboot(request):
+    return render(request, "tmp.html")
+
+def delete(request):
+    return render(request, "tmp.html")
