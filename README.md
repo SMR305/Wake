@@ -11,3 +11,6 @@ The major stipulations to this functioning is that the mediating server needs to
 - Need to make the on server portion to respond to shutdown/reboot requests.
 - POSSIBLY: Make user login to make sure that only people who log in and have permission can interact with the server controls.
 - POSSIBLY: Track uptime outside of its control? (ie know when I physically shut a server off)
+
+## NOTE ON SECRETS
+My secrets are currently stored in a file called variables.py that is not shared to the repository, so if you would like to take some of this code and iterate on it you will need to either do the same with your own secrets or replace my approach with your own for how to handle your secrets.
