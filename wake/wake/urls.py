@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
 from . import views
 from .models import Server
 
@@ -23,10 +23,8 @@ servers = list(Server.objects.values("name"))
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path("desktop/", views.toggle_button, name="desktop"),
-    path("other/", views.toggle_button, name="other"),
-    re_path(r"^add/[a-zA-Z0-9_-]{1,100}/$", views.add, name="add"),
-    re_path(r"^power/[a-zA-Z0-9_-]{1,100}/$", views.power, name="power"),
-    re_path(r"^reboot/[a-zA-Z0-9_-]{1,100}/$", views.reboot, name="reboot"),
-    re_path(r"^delete/[a-zA-Z0-9_-]{1,100}/$", views.delete, name="delete"),
+    path("add/", views.add, name="add"),
+    path("power/", views.power, name="power"),
+    path("reboot/", views.reboot, name="reboot"),
+    path("delete/", views.delete, name="delete"),
 ]

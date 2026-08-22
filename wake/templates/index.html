@@ -3,51 +3,56 @@
 <head>
     <title>Persistent Button State</title>
     {{ servers|json_script:"servers-data" }}
+
     <script>
         const servers = JSON.parse(document.getElementById("servers-data").textContent);
 
         function updateButton(button, idx) {
             const server = servers[idx];
             if (server) {
-                button.textContent = server.is_on ? "Enabled" : "Disabled";
+                button.textContent = server.name
                 button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
             }
         }
 
-        function desktop(button) {
+        function power(button, idx) {
             button.textContent = "Loading...";
-            fetch("{% url 'desktop' %}", {
+            fetch("{% url 'power' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: "bananasoup"
+                body: JSON.stringify({"name": servers[idx].name})
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === "ok") {
-                    button.textContent = data.label;
+                    button.textContent = servers[idx].name
                     button.style.backgroundColor = data.enabled ? "#4CAF50" : "#f44336";
                 }
             })
             .catch(error => console.error("Error:", error));
         }
-        
-        function other(button) {
-            fetch("{% url 'other' %}", {
+
+        function add(button) {
+            fetch("{% url 'add' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify({"name": `test-${servers.length}`, "mac_address": `${servers.length}`, "ip_address": `${servers.length}`})
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === "ok") {
-                    button.textContent = data.label;
-                    button.style.backgroundColor = data.enabled ? "#4CAF50" : "#f44336";
+                    const server = {"name": data.name, "is_on": data.is_on};
+                    const idx = servers.push(server) - 1;
+                    const newButton = document.createElement("button");
+                    newButton.onclick = () => power(newButton, idx);
+                    updateButton(newButton, idx);
+                    document.getElementById("server-buttons").appendChild(newButton);
                 }
             })
             .catch(error => console.error("Error:", error));
@@ -55,16 +60,14 @@
     </script>
 </head>
 <body>
-    <h1>Persistent Button Example</h1>
-    <button 
-        onclick="desktop(this)"
-        >
-        <script>updateButton(document.currentScript.parentElement, 0);</script>
-    </button>
-        <button 
-        onclick="other(this)"
-        >
-        <script>updateButton(document.currentScript.parentElement, 1);</script>
-    </button>
+    <h1>Server Dashboard</h1>
+    <div id="server-buttons">
+        {% for server in servers %}
+            <button onclick="power(this, {{ forloop.counter0 }})">
+                <script>updateButton(document.currentScript.parentElement, {{ forloop.counter0 }});</script>
+            </button>
+        {% endfor %}
+    </div>
+    <button onclick="add(this)">Add Server</button>
 </body>
 </html>
