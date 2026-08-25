@@ -147,4 +147,19 @@ def reboot(request):
 
 # Shared helper function for deleting a server from the database
 def delete(request):
-    return render(request, "tmp.html")
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body or "{}")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            data = request.POST
+
+        name = data.get("name")
+        try:
+            server = Server.objects.get(name=name)
+        except Server.DoesNotExist:
+            return JsonResponse({"error": "Server not found"}, status=404)
+
+        server.delete()
+        return JsonResponse({"status": "ok", "name": name})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)

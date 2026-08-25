@@ -7,6 +7,31 @@
     <script>
         const servers = JSON.parse(document.getElementById("servers-data").textContent);
 
+        {% comment %} Recieves information from the server {% endcomment %}
+        const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const serverSocket = new WebSocket(`${websocketProtocol}://${window.location.host}/ws/servers/`);
+
+        serverSocket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "server_added") {
+                servers.push(data.server);
+                renderServers();
+            } else if (data.type === "server_removed") {
+                const index = servers.findIndex(server => server.name === data.name);
+                if (index !== -1) {
+                    servers.splice(index, 1);
+                    renderServers();
+                }
+            } else if (data.type === "server_status") {
+                const server = servers.find(server => server.name === data.server.name);
+                if (server) {
+                    server.is_on = data.server.is_on;
+                    renderServers();
+                }
+            }
+        };
+
+        {% comment %} Updates the visuals of the buttons {% endcomment %}
         function updateButton(button, idx) {
             const server = servers[idx];
             if (server) {
@@ -15,6 +40,19 @@
             }
         }
 
+        {% comment %} Goes through on an update and displays the server buttons {% endcomment %}
+        function renderServers() {
+            const container = document.getElementById("server-buttons");
+            container.replaceChildren();
+            servers.forEach((server, idx) => {
+                const button = document.createElement("button");
+                button.onclick = () => power(button, idx);
+                updateButton(button, idx);
+                container.appendChild(button);
+            });
+        }
+
+        {% comment %} Handles sending a message for cycling the power on a server {% endcomment %}
         function power(button, idx) {
             button.textContent = "Loading...";
             fetch("{% url 'power' %}", {
@@ -35,6 +73,7 @@
             .catch(error => console.error("Error:", error));
         }
 
+        {% comment %} Handles the functionality for adding a server {% endcomment %}
         function add(button) {
             fetch("{% url 'add' %}", {
                 method: "POST",
@@ -45,16 +84,6 @@
                 body: JSON.stringify({"name": `test-${servers.length}`, "mac_address": `${servers.length}`, "ip_address": `${servers.length}`})
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.status === "ok") {
-                    const server = {"name": data.name, "is_on": data.is_on};
-                    const idx = servers.push(server) - 1;
-                    const newButton = document.createElement("button");
-                    newButton.onclick = () => power(newButton, idx);
-                    updateButton(newButton, idx);
-                    document.getElementById("server-buttons").appendChild(newButton);
-                }
-            })
             .catch(error => console.error("Error:", error));
         }
     </script>

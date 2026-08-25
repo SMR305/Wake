@@ -33,7 +33,9 @@ ALLOWED_HOSTS = HOSTS
 # Application definition
 
 INSTALLED_APPS = [
-    'wake',
+    'wake.apps.WakeConfig',
+    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,7 +71,14 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'wake.asgi.application'
 WSGI_APPLICATION = 'wake.wsgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database

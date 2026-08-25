@@ -17,9 +17,6 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 from . import views
-from .models import Server
-
-servers = list(Server.objects.values("name"))
 
 urlpatterns = [
     path('', views.index, name='home'),
