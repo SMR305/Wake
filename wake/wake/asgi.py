@@ -17,7 +17,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wake.settings')
 
 django_asgi_app = get_asgi_application()
 
+from .listener import start_listener
 from .routing import websocket_urlpatterns
+
+start_listener()
 
 application = ProtocolTypeRouter({
 	'http': django_asgi_app,
