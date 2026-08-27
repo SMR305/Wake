@@ -6,7 +6,14 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Server
-from .variables import TEST_MAC
+
+from dotenv import load_dotenv
+import os
+
+# Load the .env file
+load_dotenv()
+
+TEST_MAC = os.getenv("TEST_MAC")
 
 from wakeonlan import wake
 
