@@ -69,7 +69,7 @@ The dashboard is currently displayed at `http://{one-of-the-hosts-you-entered}:8
 The set of tests for the project are still a work in progress along with the rest of the application. That being said, contributions to the testing cases are also appreciated. However, do know that those contributions are held to the same standard as contributions to the rest of the project.
 
 ## Contributions
-The core rules around contributions can be found in [CONTRIBUTIONS](CONTRIBUTIONS.md).
+The core rules around contributions can be found in [CONTRIBUTIONS](CONTRIBUTING.md).
 
 ## License
 Wake is available under the [MIT License](LICENSE.txt).
