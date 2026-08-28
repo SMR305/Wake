@@ -36,7 +36,12 @@
             const server = servers[idx];
             if (server) {
                 button.textContent = server.name
-                button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
+                if (server.is_on != null) {
+                    button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
+                }
+                else {
+                    button.style.backgroundColor = "#e0f221"
+                }
             }
         }
 
@@ -54,7 +59,8 @@
 
         {% comment %} Handles sending a message for cycling the power on a server {% endcomment %}
         function power(button, idx) {
-            button.textContent = "Loading...";
+            button.style.backgroundColor = "#e0f221"
+
             fetch("{% url 'power' %}", {
                 method: "POST",
                 headers: {

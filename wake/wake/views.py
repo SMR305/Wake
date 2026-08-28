@@ -7,6 +7,8 @@ from django.shortcuts import render
 
 from .models import Server
 
+from .tmp_communicate_servers import shutdown_server, reboot_server
+
 from dotenv import load_dotenv
 import os
 
@@ -85,7 +87,7 @@ def power(request):
         try:
             data = json.loads(request.body or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
-            data = request.POST
+            return JsonResponse({"error": "Failed to read request"}, status=400)
 
         name = data.get("name")
 
@@ -94,12 +96,18 @@ def power(request):
         except Server.DoesNotExist:
             return JsonResponse({"error": "Server not found"}, status=400)
 
-        server.is_on = not server.is_on
-
-        if not server.is_on and WAKE_UP:
-            wake(TEST_MAC)
-            print("Called wake")
-        
+        if server.is_on == None:
+            return JsonResponse({
+                "status": "ok",
+                "enabled": server.is_on,
+            })
+        elif not server.is_on:
+            server.is_on = None
+            if WAKE_UP:
+                wake(TEST_MAC)
+        elif server.is_on:
+            server.is_on = None
+            shutdown_server(server)
         server.save()
 
         return JsonResponse({
@@ -111,7 +119,27 @@ def power(request):
 
 # Shared helper function for requesting a reboot from a given server
 def reboot(request):
-    return render(request, "tmp.html")
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body or "{}")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"error": "Failed to read request"}, status=400)
+
+        name = data.get("name")
+
+        try:
+            server = Server.objects.get(name=name)
+        except Server.DoesNotExist:
+            return JsonResponse({"error": "Server not found"}, status=400)
+
+        if server.is_on == True:
+            reboot_server(server)
+            server.is_on = None
+            return JsonResponse({"status": "ok"})
+        else:
+            return JsonResponse({"error": "Server not online"}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 # Shared helper function for deleting a server from the database
 def delete(request):
