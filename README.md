@@ -18,7 +18,7 @@ If you wish to use this project on your own you will need to set those up yourse
 The current secrets are:
 - TEST_MAC - This is a testing parameter, so you actually shouldn't need it, but I was using it to test the wake functionality on my actual computer.
 - VAR_SECRET_KEY (required) - This is the secret key used in production for Django
-- HOSTS (required) - This is the list of available hosts for the Django webapp. By default you can set it to ["localhost,127.0.0.1".
+- HOSTS (required) - This is the list of available hosts for the Django webapp. By default you can set it to "localhost,127.0.0.1".
 
 ## Requirements
 The requirements for this project can be found in requirements.txt, but for a more general overview.
