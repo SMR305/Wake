@@ -1,6 +1,5 @@
 .venv/
-socket-wake.py
-wake.py
+tmp_programs/
 
 *.sqlite3
 *.db

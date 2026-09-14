@@ -13,25 +13,25 @@ PORT = 5000
 
 
 def listen_for_changes():
-	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
-		listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		listener.bind((HOST, PORT))
-		listener.listen()
-		print(f"Listening for connections on port {PORT}...")
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        listener.bind((HOST, PORT))
+        listener.listen()
+        print(f"Listening for connections on port {PORT}...")
 
-		while True:
-			connection, address = listener.accept()
-			with connection:
-				print(f"Connection received from {address}")
-
-				server = Server.objects.get(id=3)
-				server.is_on = not server.is_on
-				server.save()
+        while True:
+            connection, _ = listener.accept()
+            with connection:
+                message = connection.recv(1024).decode("utf-8")
+                
+                server = Server.objects.get(name=message)
+                server.is_on = False
+                server.save()
 
 
 def start_listener():
-	threading.Thread(
-		target=listen_for_changes,
-		name="wake-change-listener",
-		daemon=True,
-	).start()
+    threading.Thread(
+        target=listen_for_changes,
+        name="wake-change-listener",
+        daemon=True,
+    ).start()
