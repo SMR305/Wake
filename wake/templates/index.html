@@ -40,22 +40,43 @@
                     button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
                 }
                 else {
-                    button.style.backgroundColor = "#e0f221"
+                    button.style.backgroundColor = "#e0f221";
                 }
             }
-        }
+        };
+
+        {% comment %} Makes the button to toggle a server on or off {% endcomment %}
+        function makeToggle(idx) {
+            const toggle = document.createElement("button");
+            toggle.onclick = () => power(toggle, idx);
+            updateButton(toggle, idx);
+            return toggle;
+        };
+
+        {% comment %} Makes the delete button for a server {% endcomment %}
+        function makeDelete(idx) {
+            const rem = document.createElement("button");
+            rem.textContent = "Delete Server";
+            rem.onclick = () => del(rem, idx);
+            return rem;
+        };
+
+        {% comment %} Makes the div each server's buttons are stored it {% endcomment %}
+        function makeServerDiv(idx) {
+            const div = document.createElement("div")
+            div.appendChild(makeToggle(idx));
+            div.appendChild(makeDelete(idx));
+            return div;
+        };
 
         {% comment %} Goes through on an update and displays the server buttons {% endcomment %}
         function renderServers() {
             const container = document.getElementById("server-buttons");
             container.replaceChildren();
             servers.forEach((server, idx) => {
-                const button = document.createElement("button");
-                button.onclick = () => power(button, idx);
-                updateButton(button, idx);
-                container.appendChild(button);
+                container.appendChild(makeServerDiv(idx));
             });
-        }
+        };
 
         {% comment %} Handles sending a message for cycling the power on a server {% endcomment %}
         function power(button, idx) {
@@ -77,7 +98,7 @@
                 }
             })
             .catch(error => console.error("Error:", error));
-        }
+        };
 
         {% comment %} Handles the functionality for adding a server {% endcomment %}
         function add(button) {
@@ -91,16 +112,35 @@
             })
             .then(response => response.json())
             .catch(error => console.error("Error:", error));
-        }
+        };
+
+        {% comment %} Handles the functionality for removing a server {% endcomment %}
+        function del(button, idx) {
+            fetch("{% url 'delete' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"name": servers[idx].name})
+            })
+            .then(response => response.json())
+            .catch(error => console.error("Error:", error));
+        };
     </script>
 </head>
 <body>
     <h1>Server Dashboard</h1>
     <div id="server-buttons">
         {% for server in servers %}
+        <div>
             <button onclick="power(this, {{ forloop.counter0 }})">
                 <script>updateButton(document.currentScript.parentElement, {{ forloop.counter0 }});</script>
             </button>
+            <button onclick="del(this, {{ forloop.counter0 }})">
+                Delete Server
+            </button>
+        </div>
         {% endfor %}
     </div>
     <button onclick="add(this)">Add Server</button>
