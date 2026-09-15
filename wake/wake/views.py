@@ -7,7 +7,7 @@ from django.shortcuts import render
 
 from .models import Server
 
-from .message_server import shutdown_server, reboot_server
+from .message_server import message_server
 
 from dotenv import load_dotenv
 import os
@@ -107,7 +107,7 @@ def power(request):
                 wake(TEST_MAC)
         elif server.is_on:
             server.is_on = None
-            shutdown_server(server)
+            message_server(server, "shutdown")
         server.save()
 
         return JsonResponse({
@@ -133,7 +133,7 @@ def reboot(request):
             return JsonResponse({"error": "Server not found"}, status=400)
 
         if server.is_on == True:
-            reboot_server(server)
+            message_server(server, "reboot")
             server.is_on = None
             return JsonResponse({"status": "ok"})
         else:
