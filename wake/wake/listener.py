@@ -25,14 +25,18 @@ def listen_for_changes():
                 message = connection.recv(1024).decode("utf-8")
                 message = message.split(":")
                 print(message)
-                if message[0] == "shutdown":                
-                    server = Server.objects.get(name=message[1])
-                    server.is_on = False
-                    server.save()
-                elif message[0] == "reboot":
-                    server = Server.objects.get(name=message[1])
-                    server.is_on = True
-                    server.save()
+                try: 
+                    if message[0] == "shutdown":                
+                        server = Server.objects.get(name=message[1])
+                        server.is_on = False
+                        server.save()
+                    elif message[0] == "reboot":
+                        server = Server.objects.get(name=message[1])
+                        server.is_on = True
+                        server.save()
+                except Server.DoesNotExist:
+                    print(f"Server '{message[1]}' not found")
+
 
 
 

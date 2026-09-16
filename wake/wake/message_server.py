@@ -23,11 +23,10 @@ def message_server(server: Server, request: str):
         print(f"Sent {bytes_sent} bytes to the server.")
     except ConnectionRefusedError:
         print(f"Connection to {TEST_IP}:{PORT} failed.")
-        server.is_on = True
-        server.save()
+        return 1
     except socket.timeout:
         print(f"Connection to {TEST_IP}:{PORT} Timed Out.")
-        server.is_on = True
-        server.save()
+        return 1
     finally:
         client_socket.close()
+    return 0
