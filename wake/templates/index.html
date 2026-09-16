@@ -47,24 +47,33 @@
 
         {% comment %} Makes the button to toggle a server on or off {% endcomment %}
         function makeToggle(idx) {
-            const toggle = document.createElement("button");
-            toggle.onclick = () => power(toggle, idx);
-            updateButton(toggle, idx);
-            return toggle;
+            const button = document.createElement("button");
+            button.onclick = () => power(button, idx);
+            updateButton(button, idx);
+            return button;
+        };
+
+        {% comment %} Makes the reboot button for a server {% endcomment %}
+        function makeReboot(idx) {
+            const button = document.createElement("button");
+            button.textContent = "Reboot Server";
+            button.onclick = () => rebt(button, idx);
+            return button;
         };
 
         {% comment %} Makes the delete button for a server {% endcomment %}
         function makeDelete(idx) {
-            const rem = document.createElement("button");
-            rem.textContent = "Delete Server";
-            rem.onclick = () => del(rem, idx);
-            return rem;
+            const button = document.createElement("button");
+            button.textContent = "Delete Server";
+            button.onclick = () => del(button, idx);
+            return button;
         };
 
         {% comment %} Makes the div each server's buttons are stored it {% endcomment %}
         function makeServerDiv(idx) {
             const div = document.createElement("div")
             div.appendChild(makeToggle(idx));
+            div.appendChild(makeReboot(idx));
             div.appendChild(makeDelete(idx));
             return div;
         };
@@ -127,6 +136,20 @@
             .then(response => response.json())
             .catch(error => console.error("Error:", error));
         };
+
+        {% comment %} Handles the reboot functionality for a server {% endcomment %}
+        function rebt(button, idx) {
+            fetch("{% url 'reboot' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"name": servers[idx].name})
+            })
+            .then(response => response.json())
+            .catch(error => console.error("Error:", error));
+        }
     </script>
 </head>
 <body>
@@ -136,6 +159,9 @@
         <div>
             <button onclick="power(this, {{ forloop.counter0 }})">
                 <script>updateButton(document.currentScript.parentElement, {{ forloop.counter0 }});</script>
+            </button>
+            <button onclick="rebt(this, {{ forloop.counter0 }})">
+                Reboot Server
             </button>
             <button onclick="del(this, {{ forloop.counter0 }})">
                 Delete Server
