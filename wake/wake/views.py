@@ -8,6 +8,7 @@ from django.shortcuts import render
 from .models import Server
 
 from .message_server import message_server
+from .handle_timeout import start_timeout
 
 from dotenv import load_dotenv
 import os
@@ -83,7 +84,7 @@ def add(request):
 # Shared helper function for shutting down or starting up a given server
 def power(request):
     if request.method == "POST":
-
+        result = 0
         try:
             data = json.loads(request.body or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -105,10 +106,14 @@ def power(request):
             server.is_on = None
             if WAKE_UP:
                 wake(TEST_MAC)
+            start_timeout(server.name)
         elif server.is_on:
             server.is_on = None
-            message_server(server, "shutdown")
-        server.save()
+            result = message_server(server, "shutdown")
+        if result == 0:
+            server.save()
+        elif result == 1:
+            return JsonResponse({"error": "Message Failed"}, status=400)
 
         return JsonResponse({
             "status": "ok",
