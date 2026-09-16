@@ -23,10 +23,17 @@ def listen_for_changes():
             connection, _ = listener.accept()
             with connection:
                 message = connection.recv(1024).decode("utf-8")
-                
-                server = Server.objects.get(name=message)
-                server.is_on = False
-                server.save()
+                message = message.split(":")
+                print(message)
+                if message[0] == "shutdown":                
+                    server = Server.objects.get(name=message[1])
+                    server.is_on = False
+                    server.save()
+                elif message[0] == "reboot":
+                    server = Server.objects.get(name=message[1])
+                    server.is_on = True
+                    server.save()
+
 
 
 def start_listener():
