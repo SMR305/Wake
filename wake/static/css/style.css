@@ -1,0 +1,14 @@
+.server-buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.server {
+    display: grid;
+    margin: 10px;
+    width: 27%;
+    background: green;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
