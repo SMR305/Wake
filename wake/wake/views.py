@@ -88,8 +88,7 @@ def power(request):
         try:
             data = json.loads(request.body or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
-            return JsonResponse({"error": "Failed to read request"}, status=400)
-
+            data = request.POST
         name = data.get("name")
 
         try:
@@ -128,7 +127,7 @@ def reboot(request):
         try:
             data = json.loads(request.body or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
-            return JsonResponse({"error": "Failed to read request"}, status=400)
+            data = request.POST
 
         name = data.get("name")
 
