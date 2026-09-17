@@ -105,7 +105,7 @@ def power(request):
         elif not server.is_on:
             server.is_on = None
             if WAKE_UP:
-                wake(TEST_MAC)
+                wake(server.mac_address)
             start_timeout(server.name)
         elif server.is_on:
             server.is_on = None
@@ -113,7 +113,7 @@ def power(request):
         if result == 0:
             server.save()
         elif result == 1:
-            return JsonResponse({"error": "Message Failed"}, status=400)
+            return JsonResponse({"error": "Message Failed"}, status=502)
 
         return JsonResponse({
             "status": "ok",
@@ -142,7 +142,7 @@ def reboot(request):
             server.is_on = None
             return JsonResponse({"status": "ok"})
         else:
-            return JsonResponse({"error": "Server not online"}, status=400)
+            return JsonResponse({"error": "Server not online"}, status=502)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
