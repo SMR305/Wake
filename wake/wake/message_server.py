@@ -16,7 +16,7 @@ def message_server(server: Server, request: str):
 
     try:
         # Connect to the server
-        server_address = (TEST_IP, PORT)
+        server_address = ("127.0.0.1", PORT)
         client_socket.connect(server_address)
         message = f"{request}:{server.name}" # May want to make a more intelligent way to convey the message
         bytes_sent = client_socket.send(message.encode())
