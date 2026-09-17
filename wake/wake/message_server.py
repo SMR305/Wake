@@ -21,11 +21,8 @@ def message_server(server: Server, request: str):
         message = f"{request}:{server.name}" # May want to make a more intelligent way to convey the message
         bytes_sent = client_socket.send(message.encode())
         print(f"Sent {bytes_sent} bytes to the server.")
-    except ConnectionRefusedError:
+    except (ConnectionRefusedError, socket.timeout):
         print(f"Connection to {TEST_IP}:{PORT} failed.")
-        return 1
-    except socket.timeout:
-        print(f"Connection to {TEST_IP}:{PORT} Timed Out.")
         return 1
     finally:
         client_socket.close()
