@@ -37,7 +37,7 @@
         function updateButton(button, idx) {
             const server = servers[idx];
             if (server) {
-                button.textContent = server.name
+                button.textContent = "Power"
                 if (server.is_on != null) {
                     button.style.backgroundColor = server.is_on ? "#4CAF50" : "#f44336";
                 }
@@ -46,6 +46,13 @@
                 }
             }
         };
+
+        {% comment %} Makes the headings for the servers {% endcomment %}
+        function makeHeading(idx) {
+            const head = document.createElement("h3");
+            head.textContent = servers[idx].name;
+            return head;
+        }
 
         {% comment %} Makes the button to toggle a server on or off {% endcomment %}
         function makeToggle(idx) {
@@ -75,6 +82,7 @@
         function makeServerDiv(idx) {
             const div = document.createElement("div")
             div.className = 'server';
+            div.appendChild(makeHeading(idx));
             div.appendChild(makeToggle(idx));
             div.appendChild(makeReboot(idx));
             div.appendChild(makeDelete(idx));
@@ -105,7 +113,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === "ok") {
-                    button.textContent = servers[idx].name
+                    button.textContent = "Power"
                     button.style.backgroundColor = data.enabled ? "#4CAF50" : "#f44336";
                 }
             })
@@ -160,6 +168,7 @@
     <div id="server-buttons" class="server-buttons">
         {% for server in servers %}
         <div class='server'>
+            <h3>{{ server.name }}</h3>
             <button onclick="power(this, {{ forloop.counter0 }})">
                 <script>updateButton(document.currentScript.parentElement, {{ forloop.counter0 }});</script>
             </button>
