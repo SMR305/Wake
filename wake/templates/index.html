@@ -113,11 +113,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === "ok") {
-                    button.textContent = "Power"
                     button.style.backgroundColor = data.enabled ? "#4CAF50" : "#f44336";
                 }
+                else {
+                    button.style.backgroundColor = servers[idx].is_on ? "#4CAF50" : "#f44336";
+                    throw new Error(`${data.error}`);
+                }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+            })
         };
 
         {% comment %} Handles the functionality for adding a server {% endcomment %}
