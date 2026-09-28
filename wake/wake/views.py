@@ -8,7 +8,7 @@ from django.shortcuts import render
 from .models import Server
 
 from .message_server import message_server
-from .handle_timeout import start_timeout
+from .timeout import add_timeout
 
 from dotenv import load_dotenv
 import os
@@ -105,10 +105,11 @@ def power(request):
             server.is_on = None
             if WAKE_UP:
                 wake(server.mac_address)
-            start_timeout(server.name)
+            add_timeout(server.name)
         elif server.is_on:
             server.is_on = None
             result = message_server(server, "shutdown")
+        
         if result == 0:
             server.save()
         elif result == 1:

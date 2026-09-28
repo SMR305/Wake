@@ -37,9 +37,6 @@ def listen_for_changes():
                 except Server.DoesNotExist:
                     print(f"Server '{message[1]}' not found")
 
-
-
-
 def start_listener():
     threading.Thread(
         target=listen_for_changes,
