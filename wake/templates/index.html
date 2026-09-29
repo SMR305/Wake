@@ -108,14 +108,14 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"name": servers[idx].name})
+                body: JSON.stringify({"id": servers[idx].id})
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === "ok") {
+                if (data.status === "ok" && data.enabled != null) {
                     button.style.backgroundColor = data.enabled ? "#4CAF50" : "#f44336";
                 }
-                else {
+                else if (data.status !== "ok") {
                     button.style.backgroundColor = servers[idx].is_on ? "#4CAF50" : "#f44336";
                     throw new Error(`${data.error}`);
                 }
@@ -147,7 +147,7 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"name": servers[idx].name})
+                body: JSON.stringify({"id": servers[idx].id})
             })
             .then(response => response.json())
             .catch(error => console.error("Error:", error));
@@ -161,7 +161,7 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"name": servers[idx].name})
+                body: JSON.stringify({"id": servers[idx].id})
             })
             .then(response => response.json())
             .catch(error => console.error("Error:", error));

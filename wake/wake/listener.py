@@ -27,11 +27,11 @@ def listen_for_changes():
                 print(message)
                 try: 
                     if message[0] == "shutdown":                
-                        server = Server.objects.get(name=message[1])
+                        server = Server.objects.get(id=int(message[1]))
                         server.is_on = False
                         server.save()
                     elif message[0] == "reboot":
-                        server = Server.objects.get(name=message[1])
+                        server = Server.objects.get(id=int(message[1]))
                         server.is_on = True
                         server.save()
                 except Server.DoesNotExist:

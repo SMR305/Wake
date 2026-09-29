@@ -18,7 +18,7 @@ class ServerTests(TestCase):
 
     def testDelete(self):
         Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0")
-        response = self.c.post("/delete/", {"name": "test-1"})
+        response = self.c.post("/delete/", {"id": "1"})
         self.assertEqual(response.status_code, 200)
 
         with self.assertRaises(Server.DoesNotExist):
@@ -30,7 +30,7 @@ class ServerTests(TestCase):
             mock_socket.return_value.send.return_value = None
             Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0", is_on=True)
 
-            response = self.c.post("/power/", {"name": "test-1"})
+            response = self.c.post("/power/", {"id": "1"})
             self.assertEqual(response.status_code, 200)
             item = Server.objects.get(name="test-1")
             self.assertEqual(item.is_on, None)
@@ -41,7 +41,7 @@ class ServerTests(TestCase):
             mock_socket.return_value.send.return_value = None
             Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0", is_on=False)
 
-            response = self.c.post("/power/", {"name": "test-1"})
+            response = self.c.post("/power/", {"id": "1"})
             self.assertEqual(response.status_code, 200)
             item = Server.objects.get(name="test-1")
             self.assertEqual(item.is_on, None)
@@ -52,7 +52,7 @@ class ServerTests(TestCase):
             mock_socket.return_value.send.return_value = None
             Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0", is_on=True)
 
-            response = self.c.post("/power/", {"name": "test-1"})
+            response = self.c.post("/power/", {"id": "1"})
             self.assertEqual(response.status_code, 200)
             item = Server.objects.get(name="test-1")
             self.assertEqual(item.is_on, None)
@@ -60,7 +60,7 @@ class ServerTests(TestCase):
     def testPowerFailConnect(self):
         Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0", is_on=True)
 
-        response = self.c.post("/power/", {"name": "test-1"})
+        response = self.c.post("/power/", {"id": "1"})
         self.assertEqual(response.status_code, 502)
 
 

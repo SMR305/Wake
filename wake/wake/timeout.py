@@ -11,8 +11,8 @@ TIMEOUT = 120
 
 work_queue = queue.Queue()
 
-def add_timeout(name: str):
-    work_queue.put([name, time.time()])
+def add_timeout(id: int):
+    work_queue.put([id, time.time()])
 
 def timeout():
     while True:
@@ -20,7 +20,7 @@ def timeout():
         print(task)
         time.sleep((task[1] + TIMEOUT) - time.time())
         try:
-            server = Server.objects.get(name=task[0], is_on=None)
+            server = Server.objects.get(id=task[0], is_on=None)
             server.is_on = False
             server.save()
         except Server.DoesNotExist:

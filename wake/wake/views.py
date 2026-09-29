@@ -35,7 +35,7 @@ def index(request):
     print(servers)
 
     # Actually important code for the home page
-    servers = list(Server.objects.values("name", "is_on"))
+    servers = list(Server.objects.values("id", "name", "is_on"))
     return render(request, "index.html", {"servers": servers})
 
 # Shared helper function for adding a new server
@@ -89,10 +89,12 @@ def power(request):
             data = json.loads(request.body or "{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
             data = request.POST
-        name = data.get("name")
+
+        id = data.get("id")
+        id = int(id)
 
         try:
-            server = Server.objects.get(name=name)
+            server = Server.objects.get(id=id)
         except Server.DoesNotExist:
             return JsonResponse({"error": "Server not found"}, status=400)
 
@@ -105,7 +107,7 @@ def power(request):
             server.is_on = None
             if WAKE_UP:
                 wake(server.mac_address)
-            add_timeout(server.name)
+            add_timeout(server.id)
         elif server.is_on:
             server.is_on = None
             result = message_server(server, "shutdown")
@@ -130,10 +132,11 @@ def reboot(request):
         except (json.JSONDecodeError, UnicodeDecodeError):
             data = request.POST
 
-        name = data.get("name")
+        id = data.get("id")
+        id = int(id)
 
         try:
-            server = Server.objects.get(name=name)
+            server = Server.objects.get(id=id)
         except Server.DoesNotExist:
             return JsonResponse({"error": "Server not found"}, status=400)
 
@@ -154,13 +157,14 @@ def delete(request):
         except (json.JSONDecodeError, UnicodeDecodeError):
             data = request.POST
 
-        name = data.get("name")
+        id = data.get("id")
+        id = int(id)
         try:
-            server = Server.objects.get(name=name)
+            server = Server.objects.get(id=id)
         except Server.DoesNotExist:
             return JsonResponse({"error": "Server not found"}, status=404)
 
         server.delete()
-        return JsonResponse({"status": "ok", "name": name})
+        return JsonResponse({"status": "ok", "name": server.name})
 
     return JsonResponse({"error": "Invalid request"}, status=400)

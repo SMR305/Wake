@@ -16,7 +16,7 @@ def broadcast_server_event(data):
 
 
 def server_data(server):
-    return {'name': server.name, 'is_on': server.is_on}
+    return {'id': server.id, 'name': server.name, 'is_on': server.is_on}
 
 
 @receiver(post_save, sender=Server)
