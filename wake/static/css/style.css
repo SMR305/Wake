@@ -1,8 +1,45 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.add-server-back {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    z-index: 2;
+    background-color: rgba(128, 128, 128, 0.777);
+    display: none;
+}
+.add-server {
+    justify-items: center;
+    display: grid;
+    padding: 5%;
+    width: 80vw;
+    position: sticky;
+    top: 10%;
+    background-color: white;
+    margin: auto;
+}
+.head {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    width: 100%;
+}
+.ipt {
+    padding: 0;
+    margin: 2%;
+    width: 80%;
+}
+
 .server-buttons {
     display: flex;
     flex-wrap: wrap;
 }
-
 .server {
     display: grid;
     margin: 10px;

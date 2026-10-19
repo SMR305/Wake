@@ -126,17 +126,22 @@
         };
 
         {% comment %} Handles the functionality for adding a server {% endcomment %}
-        function add(button) {
+        function add() {
+            var name = document.getElementById('server_name').value;
+            var mac = document.getElementById('server_mac').value;
+            var ip = document.getElementById('server_ip').value;
+
             fetch("{% url 'add' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"name": `test-${servers.length}`, "mac_address": `${servers.length}`, "ip_address": `${servers.length}`})
+                body: JSON.stringify({"name": `${name}`, "mac_address": `${mac}`, "ip_address": `${ip}`})
             })
             .then(response => response.json())
             .catch(error => console.error("Error:", error));
+            closeAdd();
         };
 
         {% comment %} Handles the functionality for removing a server {% endcomment %}
@@ -150,8 +155,7 @@
                 body: JSON.stringify({"id": servers[idx].id})
             })
             .then(response => response.json())
-            .catch(error => console.error("Error:", error));
-        };
+            .catch(error => console.error("Error:", error));        };
 
         {% comment %} Handles the reboot functionality for a server {% endcomment %}
         function rebt(button, idx) {
@@ -166,9 +170,29 @@
             .then(response => response.json())
             .catch(error => console.error("Error:", error));
         }
+
+        function openAdd() {
+            document.getElementById('add-server').style.display = 'block';
+        }
+        function closeAdd() {
+            document.getElementById('add-server').style.display = 'none';
+        }
     </script>
 </head>
 <body>
+    <div id="add-server" class="add-server-back">
+    <div class="add-server">
+        <div class="head">
+            <h2 style="margin: auto;">Add Server</h2>
+            <button onclick="closeAdd()">X</button>
+        </div>
+        <input type="text" id="server_name" placeholder="Enter Name" class="ipt">
+        <input type="text" id="server_mac" placeholder="Enter Mac" class="ipt">
+        <input type="text" id="server_ip" placeholder="Enter Ip" class="ipt">
+        <button onclick="add()" class="ipt">Submit</button>
+    </div>
+    </div>
+
     <h1>Server Dashboard</h1>
     <div id="server-buttons" class="server-buttons">
         {% for server in servers %}
@@ -186,6 +210,6 @@
         </div>
         {% endfor %}
     </div>
-    <button onclick="add(this)">Add Server</button>
+    <button onclick="openAdd()">Add Server</button>
 </body>
 </html>
