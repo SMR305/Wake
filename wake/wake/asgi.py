@@ -17,10 +17,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wake.settings')
 
 django_asgi_app = get_asgi_application()
 
+from .polling import start_polling
 from .listener import start_listener
 from .timeout import start_timeout
 from .routing import websocket_urlpatterns
 
+start_polling()
 start_listener()
 start_timeout()
 

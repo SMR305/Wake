@@ -1,5 +1,3 @@
-# The major problem with this is that the current structure does not let the queue persist between reboots,
-# so there needs to be more logic to account for that
 import time
 import threading
 import queue

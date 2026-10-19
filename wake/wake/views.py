@@ -9,6 +9,7 @@ from .models import Server
 
 from .message_server import message_server
 from .timeout import add_timeout
+from .polling import poll
 
 from dotenv import load_dotenv
 import os
@@ -22,6 +23,7 @@ from wakeonlan import wake
 
 WAKE_UP = False
 TEST = True
+CHECK = True
 
 NAME_RE = r"^[a-zA-Z0-9_-]+$"
 MAC_RE = r"^[a-fA-F0-9]{2}(:[a-fA-F0-9]{2}){5}$"
@@ -70,6 +72,8 @@ def add(request):
 
         try:
             server = Server.objects.create(name=name, is_on=True, mac_address=mac, ip_address=ip)
+            if CHECK:
+                poll(server)
         except IntegrityError:
             return JsonResponse({"error": "Conflicting information with another server"}, status=400)
 
@@ -141,7 +145,7 @@ def reboot(request):
             return JsonResponse({"error": "Server not found"}, status=400)
 
         if server.is_on == True:
-            message_server(server, "reboot")
+            message_server(server, "reboot") # Actually handle rebooting instead of assuming success
             server.is_on = None
             return JsonResponse({"status": "ok"})
         else:
