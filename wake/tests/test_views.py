@@ -14,7 +14,7 @@ class ServerTests(TestCase):
         item = Server.objects.get(name="test-1")
         self.assertEqual(item.ip_address, "127.0.0.1")
         self.assertEqual(item.mac_address, "0:0:0:0:0:0")
-        self.assertEqual(item.is_on, True)
+        self.assertEqual(item.is_on, False)
 
     def testDelete(self):
         Server.objects.create(name="test-1", ip_address="127.0.0.1", mac_address="0:0:0:0:0:0")

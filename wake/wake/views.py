@@ -71,7 +71,7 @@ def add(request):
                 return JsonResponse({"error": "One or more fields are improperly structured"}, status=400)
 
         try:
-            server = Server.objects.create(name=name, is_on=True, mac_address=mac, ip_address=ip)
+            server = Server.objects.create(name=name, is_on=False, mac_address=mac, ip_address=ip)
             if CHECK:
                 poll(server)
         except IntegrityError:
